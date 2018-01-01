@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ty.dao.EmployeeMapperParame">
+ <!-- 	public Employee findOneEmpTestDataBaseId(@Param("id")Integer id); -->
+
+	 <select id="findOneEmpTestDataBaseId" resultType="employee">
+	 <bind name="lastname" value="'%'+last_name+'%'"/>
+	 	<if test="_databaseId=='mysql'">
+	 		select (<include refid="insertConum"></include>) from tbl_employee 
+	 		<if test="_parameter!=null">
+	 			where last_name like #{lastname}
+	 		</if>
+	 	</if>
+	 	<if test="_databaseId=='oracle'">
+	 		select * from tbl_employee where id = #{id}
+	 	</if> 
+	 </select>
+	 <sql id="insertConum">
+	 	<if test="_databaseId=='mysql'">
+			id,last_name,email
+	 	</if>
+	 	<if test="_databaseId=='oracle'">
+			id,last_name,email
+	 	</if> 
+	 </sql>
+</mapper>

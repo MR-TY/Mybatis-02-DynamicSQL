@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<!-- 下面节点定义是有顺序要求的，否则会报错 -->
+	<properties resource="init.properties"></properties>
+	<!-- 设置 -->
+	<settings>
+	<!-- 
+		lazyLoadingEnabled:开启的时候只有在使用的时候被加载，不使用的时候不会进行加载
+		aggressiveLazyLoading：关闭之后就不会侵入懒加载
+	 -->
+		<setting name="lazyLoadingEnabled" value="true"/>
+		<setting name="aggressiveLazyLoading" value="false"/>
+	</settings>
+	<!-- 设置类型别名 -->
+	<typeAliases>
+		<package name="com.ty.entity" />
+	</typeAliases>
+	<!-- 设置环境 -->
+	<environments default="dev_mysql">
+		<environment id="dev_mysql">
+			<transactionManager type="JDBC"></transactionManager>
+			<dataSource type="POOLED">
+				<property name="driver" value="${jdbc.driver}" />
+				<property name="url" value="${jdbc.url}" />
+				<property name="username" value="${jdbc.username}" />
+				<property name="password" value="${jdbc.password}" />
+			</dataSource>
+		</environment>
+	
+		<environment id="dev_oracle">
+			<transactionManager type="JDBC" />
+			<dataSource type="POOLED">
+				<property name="driver" value="${orcl.driver}" />
+				<property name="url" value="${orcl.url}" />
+				<property name="username" value="${orcl.username}" />
+				<property name="password" value="${orcl.password}" />
+			</dataSource>
+		</environment>
+	</environments>
+	
+	<databaseIdProvider type="DB_VENDOR">
+		<!-- 为不同的数据库厂商起别名 -->
+		<property name="MySQL" value="mysql"/>
+		<property name="Oracle" value="oracle"/>
+		<property name="SQL Server" value="sqlserver"/>
+	</databaseIdProvider>
+	<!-- 设置映射器 -->
+	 <mappers>
+	 	<mapper resource="com/ty/dao/Employee.xml"/> 
+	 	<mapper resource="com/ty/dao/EmployeeMapperPlus.xml"/> 
+	 	<mapper resource="com/ty/dao/DepartmentMapper.xml"/> 
+	 	<mapper resource="com/ty/dao/EmployeeMapperDynamicSQL.xml"/> 
+	 	<mapper resource="com/ty/dao/EmployeeMapperParame.xml"/> 
+		<!-- <mapper class="com.ty.dao.EmployeeMapper"/> -->
+		<!-- <package name="com.ty.dao"/> -->
+	</mappers> 
+
+</configuration>

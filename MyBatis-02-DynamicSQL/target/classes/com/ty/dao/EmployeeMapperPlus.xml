@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ty.dao.EmployeeMapperPlus">
+	<!--	public Employee findOneEmployeeById(Integer id);  -->
+	
+	<resultMap type="com.ty.entity.Employee" id="emp">
+		<id column="id" property="id"/>
+		<result column="last_name" property="last_name"/>
+	</resultMap>
+	
+	<select id="findOneEmployeeById" resultMap="emp">
+		select * from tbl_employee where id = #{id}
+	</select>
+	
+	
+	<resultMap type="com.ty.entity.Employee" id="MyEmp">
+		<id column="id" property="id"/>
+		<result column="last_name" property="last_name"/>
+		<result column="gender" property="gender"/>
+		<association property="dept" javaType="com.ty.entity.Department"> 
+			<id column="d_id" property="id"/>
+			<result column="dept_name" property="departmentName"/>
+		</association>
+	</resultMap>
+	
+	<select id="getEmpAndDept" resultMap="MyEmp">
+			SELECT 
+			e.id id,e.last_name last_name, e.gender gender, e.email email,e.d_id 
+			d_id,d.id did,d.dept_name dept_name
+			FROM 
+			tbl_employee e, tbl_dept d
+			WHERE
+			e.d_id = d.id
+			AND e.id=#{id}
+	</select>
+	<!-- 
+		使用association进行分步查询 public Employee getEmpByIdStep(Integer id);
+		步骤：
+		1.先按照员工的id查出员工的信息
+		2.根据员工中查出的d_id，在去部门中查出部门的信息
+		3.把查出的部门插入员工的信息
+	-->
+	<!-- 
+			property:通过select调用的方法查询的结果赋值
+			colunm:指定哪一列查询的结果，赋给select中所指定的方法，入参
+	-->
+	<resultMap type="com.ty.entity.Employee" id="MyEmpByStep">
+		<id column="id" property="id"/>
+		<result column="last_name" property="last_name"/>
+		<result column="gender" property="gender"/>
+		<result column="email" property="email"/>
+		<association property="dept" 
+		select="com.ty.dao.DepartmentMapper.GetDeptById"
+		column="d_id">
+		</association>
+	</resultMap>
+	
+	<select id="getEmpByIdStep" resultMap="MyEmpByStep">
+		select * from tbl_employee where id = #{id}
+	</select>
+	
+		<select id="getEmpsByDeptId" resultType="employee">
+			SELECT * from tbl_employee WHERE d_id = #{id}
+		</select>
+</mapper>

@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ty.dao.DepartmentMapper">
+		
+		
+		<resultMap type="com.ty.entity.Department" id="MyDeptStep">
+			<id column="id" property="id"/>
+			<result column="departmentName" property="departmentName"/>
+			<collection property="emps" ofType="employee"
+				 select="com.ty.dao.EmployeeMapperPlus.getEmpsByDeptId" column="id">
+			</collection>
+		</resultMap>
+		
+		<select id="GetDeptById" resultMap="MyDeptStep">
+			select id ,dept_name departmentName from tbl_dept where id = #{id}
+		</select>
+		
+	<!-- 
+		1.需求：查询部门的时候把所有的员工信息打印出来 	
+		2.查询方法：public Department getDeptByIdPlus(Integer id);
+		3.部门中三个属性：
+			private Integer id;
+			private String departmentName;
+			private List<Employee> emps;
+			
+		4.ofType:指定集合元素的类型
+	-->
+	<resultMap type="com.ty.entity.Department" id="MyDept">
+		<id column="did" property="id"/>
+		<result column="dept_name" property="departmentName"/>
+		<collection property="emps" ofType="employee">
+			<id column="eid" property="id"/>
+			<result column="last_name" property="last_name"/>
+			<result column="email" property="email"/>
+			<result column="gender" property="gender"/>
+		</collection>
+	</resultMap>
+	
+	<select id="getDeptByIdPlus" resultMap="MyDept">
+		SELECT 
+		e.id eid,e.last_name last_name, e.gender gender, e.email email,e.d_id d_id,d.id did,d.dept_name dept_name
+		from tbl_dept d
+		left OUTER JOIN tbl_employee e
+		ON e.d_id = d.id
+		WHERE d.id = #{id}
+	</select>
+</mapper>

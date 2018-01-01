@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ty.dao.EmployeeMapperDynamicSQL">
+	<!-- public List<Employee> findEmpsByConditionTestIf(Employee employee); -->
+	<select id="findEmpsByConditionTestIf" resultType="employee">
+		select * from tbl_employee 
+		<where>
+			<if test="id!=null">
+				and id=#{id}
+			</if>
+			<if test="last_name!=null and last_name!=''">
+				and last_name like #{last_name}
+			</if>
+			<if test="email!=null and email !=''">
+				and email like #{email}
+			</if>
+			<if test="gender==0 or gender==1">
+			  and gender = #{gender}
+			</if>
+		</where>
+	</select>	
+	<select id="findEmpsByConditionTestChoose" resultType="employee">
+		select * from tbl_employee 
+		<where>
+			<choose>
+				<when test="id!=null">id=#{id}</when>
+				<when test="last_name!=null">last_name like #{last_name}</when>
+				<when test="email!=null">email like #{email}</when>
+				<otherwise>1=1</otherwise>
+			</choose>
+		</where>
+	</select>
+	
+	<!-- 更新 :public void updateEmp(Employee employee);-->
+	<update id="updateEmp" >
+		update tbl_employee 
+		<set>
+			<if test="last_name!=null">last_name=#{last_name},</if>
+			<if test="gender!=null">gender=#{gender},</if>
+			<if test="email!=null">email=#{email}</if>
+		</set> 
+		where id=#{id}
+	</update>
+	
+	<!-- 	
+		public List<Employee> getEmpsByConditionTestForeach(List<Integer> ids);
+		collection:遍历的值
+		item:将遍历的元素赋值给指定的变量
+		separator:每个元素之间的分隔符
+		open:拼接一个开始的符号
+	 -->
+	 <select id="getEmpsByConditionTestForeach" resultType="employee">
+	 	select * from tbl_employee where id in
+	 		<foreach collection="ids" item="item_id" separator="," open="(" close=")">
+	 			#{item_id}
+	 		</foreach>
+	 </select>
+	 <!-- public void addEmps(@Param("employees")List<Employee> employees); -->
+	 <insert id="addEmps">
+	 	insert tbl_employee(last_name,gender,email,d_id) values
+	 	<foreach collection="employees" item="employees" separator=",">
+	 		(#{employees.last_name},#{employees.gender},#{employees.email},#{employees.dept.id})
+	 	</foreach>
+	 </insert>
+	 
+</mapper>
